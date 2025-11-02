@@ -15,7 +15,7 @@ import { Task } from "../models/Task"; // Explicitly import Task entity
  * Determines the file extension for migrations based on the current Node.js environment.
  * Uses '.ts' for development and '.js' for other environments (e.g., production).
  */
-const migrationExtension = process.env.NODE_ENV === 'development' ? 'ts' : 'js';
+const migrationExtension = process.env.NODE_ENV === "development" ? "ts" : "js";
 
 /**
  * TypeORM data source configuration.
@@ -32,6 +32,8 @@ export const AppDataSource = new DataSource({
   synchronize: false, // Never use synchronize in production; use migrations instead
   logging: false,
   entities: [User, Task], // Explicitly list entities for reliable discovery
-  migrations: [path.join(process.cwd(), `dist/data/migrations/**/*.${migrationExtension}`)],
+  migrations: [
+    path.join(process.cwd(), `dist/data/migrations/**/*.${migrationExtension}`),
+  ],
   subscribers: [],
 });

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import pino from "pino";
-import { CustomError, InternalServerError } from "@utils/errors";
+import { CustomError } from "@utils/errors";
 import { config } from "@config/index";
 
 /**
