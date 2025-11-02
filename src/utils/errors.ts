@@ -1,4 +1,3 @@
-
 /**
  * @file Defines custom error classes used throughout the application.
  * These custom errors extend the native Error class and include an HTTP status code,

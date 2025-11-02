@@ -1,4 +1,4 @@
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 
 // Load environment variables from .env file
 dotenv.config();
@@ -19,6 +19,6 @@ export const config = {
     name: process.env.DB_NAME || "tasks_db",
   },
   jwt: {
-    secret: process.env.JWT_SECRET || 'your_super_secret_key',
+    secret: process.env.JWT_SECRET || "your_super_secret_key",
   },
 };

@@ -4,7 +4,7 @@
  * and specifies the source files where JSDoc comments for API endpoints and DTOs are located.
  */
 
-import swaggerJSDoc from 'swagger-jsdoc';
+import swaggerJSDoc from "swagger-jsdoc";
 
 /**
  * Options for `swagger-jsdoc`.
@@ -15,16 +15,16 @@ const swaggerOptions: swaggerJSDoc.Options = {
    * The base OpenAPI definition.
    */
   swaggerDefinition: {
-    openapi: '3.0.0',
+    openapi: "3.0.0",
     info: {
-      title: 'Express MVC API',
-      version: '1.0.0',
-      description: 'API documentation for the Express MVC project',
+      title: "Express MVC API",
+      version: "1.0.0",
+      description: "API documentation for the Express MVC project",
     },
     servers: [
       {
-        url: 'http://localhost:3000/api',
-        description: 'Development server',
+        url: "http://localhost:3000/api",
+        description: "Development server",
       },
     ],
     components: {
@@ -33,9 +33,9 @@ const swaggerOptions: swaggerJSDoc.Options = {
          * Security scheme for JWT Bearer Token authentication.
          */
         bearerAuth: {
-          type: 'http',
-          scheme: 'bearer',
-          bearerFormat: 'JWT',
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
         },
       },
     },
@@ -49,7 +49,7 @@ const swaggerOptions: swaggerJSDoc.Options = {
    * Paths to files containing OpenAPI (Swagger) annotations.
    * These files will be parsed by `swagger-jsdoc` to generate the API documentation.
    */
-  apis: ['./src/routes/*.ts', './src/dtos/*.ts'],
+  apis: ["./src/routes/*.ts", "./src/dtos/*.ts"],
 };
 
 /**

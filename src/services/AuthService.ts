@@ -6,7 +6,11 @@ import { AppDataSource } from "@config/data-source";
 import { User } from "@models/User";
 import { RegisterUserDto } from "@dtos/RegisterUserDto";
 import { LoginUserDto } from "@dtos/LoginUserDto";
-import { BadRequestError, UnauthorizedError, InternalServerError } from "@utils/errors";
+import {
+  BadRequestError,
+  UnauthorizedError,
+  InternalServerError,
+} from "@utils/errors";
 
 /**
  * Service for handling authentication logic.

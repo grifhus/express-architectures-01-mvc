@@ -29,7 +29,7 @@ export const errorHandler = (
   logger.error(err.stack);
 
   // Determine the status code and message based on the error type
-  let statusCode = err instanceof CustomError ? err.statusCode : 500;
+  const statusCode = err instanceof CustomError ? err.statusCode : 500;
   let message = err.message;
 
   // If it's a generic 500 error and not a custom one, use a generic message

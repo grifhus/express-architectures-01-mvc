@@ -1,7 +1,10 @@
 import { Router, Request, Response } from "express";
 import { container } from "tsyringe";
 import { TaskController } from "@controllers/TaskController";
-import { authMiddleware, AuthenticatedRequest } from "@middlewares/AuthMiddleware";
+import {
+  authMiddleware,
+  AuthenticatedRequest,
+} from "@middlewares/AuthMiddleware";
 import { validateDto } from "@middlewares/ValidationMiddleware";
 import { CreateTaskDto } from "@dtos/CreateTaskDto";
 
@@ -47,7 +50,9 @@ router.use(authMiddleware);
  *       401:
  *         description: Unauthorized.
  */
-router.post("/", validateDto(CreateTaskDto), (req: Request, res: Response) => taskController.createTask(req as AuthenticatedRequest, res));
+router.post("/", validateDto(CreateTaskDto), (req: Request, res: Response) =>
+  taskController.createTask(req as AuthenticatedRequest, res),
+);
 
 /**
  * @swagger
@@ -63,6 +68,8 @@ router.post("/", validateDto(CreateTaskDto), (req: Request, res: Response) => ta
  *       401:
  *         description: Unauthorized.
  */
-router.get("/", (req: Request, res: Response) => taskController.getTasks(req as AuthenticatedRequest, res));
+router.get("/", (req: Request, res: Response) =>
+  taskController.getTasks(req as AuthenticatedRequest, res),
+);
 
 export default router;

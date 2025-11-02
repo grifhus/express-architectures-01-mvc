@@ -1,4 +1,3 @@
-
 import { Request, Response, NextFunction } from "express";
 import { plainToClass } from "class-transformer";
 import { validate, ValidationError } from "class-validator";
@@ -13,7 +12,7 @@ import { BadRequestError } from "@utils/errors";
  * @param dtoClass The DTO class to validate the request body against.
  * @returns An Express middleware function.
  */
-export const validateDto = (dtoClass: any) => {
+export const validateDto = (dtoClass: new (...args: unknown[]) => object) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     // Transform the plain request body object into an instance of the DTO class
     const dto = plainToClass(dtoClass, req.body);

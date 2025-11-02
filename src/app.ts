@@ -27,13 +27,15 @@ export const app = express();
  */
 const logger = pino({
   msgPrefix: undefined, // Explicitly define msgPrefix to satisfy pino-http's type definition
-  transport: config.nodeEnv === "development" ? { target: "pino-pretty" } : undefined,
+  transport:
+    config.nodeEnv === "development" ? { target: "pino-pretty" } : undefined,
 });
 
 // --- Middleware --- //
 
 // Pino-http middleware for logging requests and responses
-// @ts-expect-error: Type 'Logger<never>' is not assignable to type 'Logger<never, boolean> | undefined'.app.use(pinoHttp({ logger: logger as pino.Logger }));
+// @ts-expect-error: Type 'Logger<never>' is not assignable to type 'Logger<never, boolean> | undefined'.
+app.use(pinoHttp({ logger: logger as pino.Logger }));
 
 /**
  * Middleware for setting various HTTP headers to improve security.

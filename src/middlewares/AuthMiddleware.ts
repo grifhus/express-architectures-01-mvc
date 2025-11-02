@@ -32,7 +32,9 @@ export const authMiddleware = (
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return next(new UnauthorizedError("Authorization header missing or malformed"));
+    return next(
+      new UnauthorizedError("Authorization header missing or malformed"),
+    );
   }
 
   const token = authHeader.split(" ")[1];
