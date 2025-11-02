@@ -73,7 +73,7 @@ app.use("/api/tasks", TaskRoutes);
  */
 app.get("/", (req, res) => {
   req.log.info("Hello from the root route!");
-  res.send("Welcome to the Base Project API!");
+  res.send("Welcome to the MVC Project API!");
 });
 
 // --- Error Handling --- //
