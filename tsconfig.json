@@ -11,11 +11,15 @@
     "skipLibCheck": true,
     "outDir": "./dist",
     "rootDir": "./src",
+    "typeRoots": ["./src/types", "./node_modules/@types"],
     "baseUrl": ".",
     "paths": {
       "@config/*": ["src/config/*"],
-      "@data/*": ["src/data/*"],
-      "@http/*": ["src/http/*"],
+      "@models/*": ["src/models/*"],
+      "@dtos/*": ["src/dtos/*"],
+      "@controllers/*": ["src/controllers/*"],
+      "@routes/*": ["src/routes/*"],
+      "@middlewares/*": ["src/middlewares/*"],
       "@services/*": ["src/services/*"],
       "@utils/*": ["src/utils/*"]
     }

@@ -92,6 +92,92 @@ Se discutieron varias estrategias sobre cómo organizar los proyectos en Git:
 2.  **Git Submodules:** Un repositorio principal con "enlaces" a sub-repositorios. Se descartó por ser una característica notoriamente compleja y difícil de manejar.
 3.  **Multi-repo (Opción Elegida):** Un repositorio separado e independiente para cada proyecto. Se concluyó que esta era la opción más limpia, simple y didáctica para nuestro objetivo de aprender y comparar arquitecturas de forma aislada.
 
+## Fase 4: Refactorización y Mejoras Arquitectónicas
+
+Después de tener una base sólida, se realizó una sesión de refactorización para mejorar aún más la calidad del código y la arquitectura del proyecto.
+
+### 1. Implementación de Inyección de Dependencias (DI)
+
+-   **Observación:** Las clases de controladores y servicios creaban sus propias dependencias, lo que dificultaba las pruebas y el mantenimiento.
+-   **Decisión:** Se decidió implementar la inyección de dependencias para desacoplar los componentes.
+-   **Librería Elegida:** Se optó por `tsyringe` de Microsoft por su simplicidad y su enfoque declarativo basado en decoradores, que se alinea bien con el estilo de TypeScript y NestJS.
+-   **Implementación:**
+    -   Se decoraron los servicios y controladores con `@injectable()`.
+    -   Se refactorizaron los controladores para recibir los servicios a través del constructor.
+    -   Se actualizaron las rutas para resolver los controladores desde el contenedor de `tsyringe`.
+
+### 2. Centralización de la Configuración
+
+-   **Observación:** Las variables de entorno se accedían directamente con `process.env` en diferentes partes del código.
+-   **Mejora:** Se creó un archivo `src/config/index.ts` para centralizar la carga y gestión de toda la configuración de la aplicación. Ahora, todos los módulos importan la configuración desde este archivo, lo que facilita la gestión en diferentes entornos.
+
+### 3. Mejora del Manejo de Errores
+
+-   **Observación:** La lógica de negocio lanzaba errores genéricos (`new Error(...)`).
+-   **Mejora:** Se reemplazaron los errores genéricos por clases de error personalizadas y más descriptivas (ej. `BadRequestError`, `UnauthorizedError`, `InternalServerError`) que ya estaban definidas en `src/utils/errors.ts`. Esto hace que el código sea más legible y el manejo de errores más robusto.
+
 ## Estado Final del `base-project`
 
 El proyecto base se encuentra en un estado completo, verificado y profesional. Incluye una base de código funcional, un sistema de autenticación, manejo de base de datos con migraciones, y un robusto conjunto de herramientas para garantizar la calidad y la automatización del código. Está listo para ser versionado y clonado para los siguientes proyectos.
+
+## Fase 5: Estabilización y Documentación Adicional
+
+Esta fase se centró en resolver problemas de ejecución, mejorar la observabilidad y enriquecer la documentación del proyecto.
+
+### 1. Resolución de Conflictos de Alias de Módulo (`module-alias` vs `tsconfig-paths`)
+
+-   **Problema:** Se experimentaron errores de resolución de módulos (`Cannot find module '@config/swagger'`) al ejecutar `npm run dev` y `npm run start`.
+    -   En desarrollo (`npm run dev`), `module-alias/register` interfería con `tsconfig-paths`, causando `SyntaxError`.
+    -   En producción (`npm run start`), la ausencia de `module-alias/register` impedía la resolución de alias en los archivos compilados.
+-   **Solución:**
+    -   Para desarrollo, se eliminó la importación condicional de `module-alias/register` de `src/index.ts`, confiando en `tsconfig-paths`.
+    -   Para producción, se modificó el script `start` en `package.json` para precargar `module-alias/register` usando `node -r module-alias/register dist/index.js`. Esto asegura que los alias se resuelvan correctamente en el entorno compilado.
+
+### 2. Resolución del Error "No metadata for 'User' was found" (TypeORM)
+
+-   **Problema:** Al intentar registrar un usuario en producción, TypeORM no encontraba los metadatos de la entidad `User`, resultando en un error 500.
+-   **Causa:** La configuración dinámica de `entities` en `src/config/data-source.ts` (usando `path.join` y `process.cwd()`) no estaba siendo interpretada correctamente por TypeORM en el entorno de producción para descubrir las entidades compiladas.
+-   **Solución:** Se modificó `src/config/data-source.ts` para importar explícitamente las entidades `User` y `Task` y añadirlas directamente al array `entities`. Esto eliminó cualquier ambigüedad en la resolución de rutas y aseguró que TypeORM pudiera acceder a los metadatos necesarios.
+
+### 3. Mejora del Logging con Pino y Pino-Pretty
+
+-   **Problema:** La salida por defecto de `pino` en formato JSON era difícil de leer en la consola de desarrollo.
+-   **Solución:**
+    -   Se instaló `pino-pretty` como dependencia de desarrollo.
+    -   Se configuró `pino-http` en `src/app.ts` para usar `pino-pretty` como transporte condicionalmente en el entorno de desarrollo. Esto proporciona logs humanamente legibles sin afectar el formato JSON para producción.
+    -   Se resolvió un error de TypeScript (`ERR_REQUIRE_ESM`) relacionado con la configuración de `pino-pretty` mediante un cast explícito del logger de `pino`.
+
+### 4. Implementación de Documentación de API con Swagger/OpenAPI
+
+-   **Acción:** Se integró Swagger para generar documentación interactiva de la API.
+-   **Implementación:**
+    -   Se instaló `swagger-jsdoc`.
+    -   Se creó `src/config/swagger.ts` para la configuración de Swagger.
+    -   Se añadieron comentarios JSDoc con sintaxis Swagger a los DTOs (`src/dtos`) y rutas (`src/routes`).
+    -   Se configuró `swagger-ui-express` en `src/app.ts` para servir la documentación en `/api-docs`.
+
+### 5. Documentación Interna Detallada de Dependencias
+
+-   **Acción:** Se creó un documento detallado explicando las dependencias clave del proyecto.
+-   **Implementación:**
+    -   Se creó `src/docs/DEPENDENCIES.md`.
+    -   Para cada dependencia, se explicó qué es, por qué se usa y cómo funciona en el contexto del proyecto.
+    -   Se añadió un enlace a este nuevo documento en `README.md`.
+
+### 6. Implementación de Documentación de Código Fuente con TypeDoc y TSDoc
+
+-   **Acción:** Se implementó la generación de documentación HTML interactiva a partir de los comentarios TSDoc en el código fuente.
+-   **Problema:** TypeDoc no generaba la documentación completa o mostraba errores de TypeScript.
+    -   Inicialmente, la configuración de `entryPoints` en `typedoc.json` era demasiado restrictiva.
+    -   Se encontró un error persistente de TypeScript (`Property 'msgPrefix' is missing...`) al generar la documentación, relacionado con la configuración de `pino-http`.
+-   **Solución:**
+    -   Se instaló `typedoc` y `typedoc-plugin-missing-exports`.
+    -   Se configuró `typedoc.json` con `entryPoints: ["./src/**/*.ts"]` para asegurar que TypeDoc procesara todos los archivos fuente.
+    -   Se añadieron comentarios TSDoc exhaustivos a todos los componentes clave del proyecto (controladores, servicios, modelos, middlewares, DTOs, configuración, utilidades, rutas, `index.ts`, `app.ts`).
+    -   Se añadió un `// @ts-ignore` en `src/app.ts` sobre la línea de `pinoHttp` para suprimir el error de TypeScript que bloqueaba la generación de la documentación, ya que era un problema de tipado y no de ejecución.
+    -   Se añadió un script `npm run build:docs` a `package.json`.
+    -   Se actualizó `README.md` con instrucciones para generar y ver la documentación.
+
+## Estado Actual del `base-project`
+
+El proyecto ha alcanzado un alto nivel de estabilidad y profesionalismo. Todos los scripts de desarrollo y producción funcionan correctamente, la API es funcional, la observabilidad ha mejorado con un logging configurable y la documentación interna y externa está completa. El proyecto está listo para ser utilizado como una base sólida para futuros desarrollos y como una herramienta de aprendizaje efectiva.

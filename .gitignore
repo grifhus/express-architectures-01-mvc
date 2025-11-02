@@ -51,6 +51,9 @@ Thumbs.db
 src/data/migrations/*.js
 src/data/migrations/*.js.map
 
+# Generated documentation
+docs/
+
 # Test coverage
 coverage/
 

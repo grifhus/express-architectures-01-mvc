@@ -1,13 +1,31 @@
+import { injectable } from "tsyringe";
 import { Request, Response } from "express";
 import { plainToClass } from "class-transformer";
 import { validate } from "class-validator";
-import { AuthService } from "../../services/AuthService";
-import { RegisterUserDto } from "../dtos/RegisterUserDto";
-import { LoginUserDto } from "../dtos/LoginUserDto";
+import { AuthService } from "@services/AuthService";
+import { RegisterUserDto } from "@dtos/RegisterUserDto";
+import { LoginUserDto } from "@dtos/LoginUserDto";
 
+/**
+ * Controller for handling authentication requests.
+ * It is decorated with @injectable() to allow tsyringe to manage its lifecycle and dependencies.
+ */
+@injectable()
 export class AuthController {
-  private authService = new AuthService();
+  /**
+   * The constructor receives an instance of AuthService through dependency injection.
+   * @param authService The authentication service.
+   */
+  constructor(private authService: AuthService) {}
 
+  /**
+   * Handles user registration requests.
+   * Validates the request body, calls the AuthService to register the user,
+   * and sends back the new user's details (without password).
+   * @param req The Express request object, containing the registration data in the body.
+   * @param res The Express response object.
+   * @returns A Promise that resolves when the response is sent.
+   */
   async register(req: Request, res: Response): Promise<void> {
     try {
       const registerUserDto = plainToClass(RegisterUserDto, req.body);
@@ -31,6 +49,14 @@ export class AuthController {
     }
   }
 
+  /**
+   * Handles user login requests.
+   * Validates the request body, calls the AuthService to authenticate the user,
+   * and sends back a JWT token and the user's details (without password).
+   * @param req The Express request object, containing the login credentials in the body.
+   * @param res The Express response object.
+   * @returns A Promise that resolves when the response is sent.
+   */
   async login(req: Request, res: Response): Promise<void> {
     try {
       const loginUserDto = plainToClass(LoginUserDto, req.body);
